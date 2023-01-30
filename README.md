@@ -25,8 +25,9 @@ Be free to choose that which satisfies your necessities.
 
 ### Using Docker
 
-1. Install `docker` and `docker-compose`.
-2. Run `docker-compose up --build` to run TEST instance of your database. Use some other stuff (i.e., Gunicorn) for your production environment.
-3. If it is your first run, in another terminal run `docker-compose run web python manage.py migrate` when all the services are already up and running. This will create database schema without any data.
-
-If you want to use another database host, change the environment options in `docker-compose` of the `web`service and run `docker-compose up web --build` to startup the development environment.
+```
+docker-compose build
+docker-compose up -d
+docker exec -it saveload_backend_web_1 python manage.py migrate
+docker restart saveload_backend_web_1
+```

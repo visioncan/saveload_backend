@@ -83,7 +83,7 @@ STATICFILES_FINDERS = (
 )
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = 'c5-%u0l1*(dj@u33!5*o_gtti0)kkh$m%i#@!(!$d%779kaa&amp;b'
+SECRET_KEY = os.getenv('SECRET_KEY', 'c5-%u0l1*(dj@u33!5*o_gtti0)kkh$m%i#@!(!$d%779kaa&amp;b')
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
@@ -100,6 +100,11 @@ MIDDLEWARE_CLASSES = (
 	'django.contrib.messages.middleware.MessageMiddleware',
 	# Uncomment the next line for simple clickjacking protection:
 	# 'django.middleware.clickjacking.XFrameOptionsMiddleware',
+)
+
+MIDDLEWARE = (
+	'django_prometheus.middleware.PrometheusBeforeMiddleware',
+	'django_prometheus.middleware.PrometheusAfterMiddleware',
 )
 
 ROOT_URLCONF = 'charting_library_charts.urls'
@@ -125,6 +130,7 @@ INSTALLED_APPS = (
 	# Uncomment the next line to enable admin documentation:
 	# 'django.contrib.admindocs',
 	'model',
+	'django_prometheus',
 )
 
 # A sample logging configuration. The only tangible logging
@@ -140,12 +146,26 @@ LOGGING = {
 			'()': 'django.utils.log.RequireDebugFalse'
 		}
 	},
+	'formatters': {
+		'verbose': {
+			'format': "[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s] %(message)s",
+			'datefmt': "%d/%b/%Y %H:%M:%S"
+		}
+	},
 	'handlers': {
+		'console': {
+			'class': 'logging.StreamHandler',
+			'formatter': 'verbose'
+		},
 		'mail_admins': {
 			'level': 'ERROR',
 			'filters': ['require_debug_false'],
 			'class': 'django.utils.log.AdminEmailHandler'
 		}
+	},
+	'root': {
+		'handlers': ['console'],
+		'level': 'WARNING',
 	},
 	'loggers': {
 		'django.request': {
@@ -153,5 +173,10 @@ LOGGING = {
 			'level': 'ERROR',
 			'propagate': True,
 		},
+		'py.warnings': {
+			'handlers': ['console'],
+			'level': 'WARNING',
+			'propagate': True,
+		}
 	}
 }
