@@ -27,6 +27,8 @@ Be free to choose that which satisfies your necessities.
 
 ```
 docker-compose build
+# create network
+docker network create tvappnet
 docker-compose up -d
 docker exec -it saveload_backend_web_1 python manage.py migrate
 docker restart saveload_backend_web_1
